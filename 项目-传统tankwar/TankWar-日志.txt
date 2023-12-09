@@ -1,0 +1,84 @@
+TankWar_1.0:
+文件编码格式 = UTF-8
+游戏引擎：Java自带的JPanel制作，我愿称其为"绘板引擎"！:)
+
+TankWar 1.0
+【TankGame01】
+	-->1.利用JPanel和JFrame创建java的绘制窗口。TankGame中的HspTankGame为程序主入口。
+	-->2.Tank父类 ，Hero、Enemy子类。绘制hero坦克。
+	-->3.Tank类实现坦克的绘制（按照敌人与玩家分类绘制，按照不同方向绘制），Hero、Enemy子类调用，JPane再生成两者的对象，再各自在重写的paint()方法调用
+
+【TankGame02】
+	-->1.绘制敌人tank。继承JPanel的类构造函数中会new一个Enemy对象，重写的paint()方法里负责绘制tank图像
+	-->2.MyPanel implements keyListener，利用按键 监听实现hero对象的移动。
+	--》主类里需要this.addKeyListener
+	--》注意：MyPanel需要单开一个线程，来实现repaint()。否则无法刷新帧，tank也就无法移动
+
+【TankGame03】
+	-->1.创建子弹类--Bullet。
+	-->开启一个单独线程，让子弹类自己移动；注意线程结束的条件：子弹碰到边界
+	--》后补充：在线程结束条件里，添加"isLive"条件；当子弹碰到tank时，子弹的isLive = false
+	-->2.Hero按J键可以进行子弹发射(按J就new一个Bullet对象)
+	--》Hero有一个shot()方法，根据方向发射子弹，并启动bullet运动的线程
+	-->3.MyPanel游戏场景下，写一个hitTank()类，来判断子弹是否击中tank（可以是Enemy也可以是Hero）。如果击中，tank.setLive(false)，b.setLive(false)
+
+
+
+TankWar_2.0：
+编码utf-8
+游戏引擎：依旧是"绘板引擎"！:)
+
+【TankGame01】
+	-->1.实现tank爆炸。创建Bomb动画播放类
+	-->2. 子弹击中tank就new 一个bomb对象，存入Vector<bomb>
+	-->3.在方法绘制中，利用，模拟动画播放，绘制对应爆炸图片即可
+	--》注意：为了图片能够正常导入，建议使用ps调试一下
+
+【TankGame02】
+	-->1.实现了敌人tank自由移动。为Enemy类开启了一个线程
+	-->2.使用(Math.random() * 100 + 1)，随机判断移动
+	-->3.复用Enemy继承Tank的move()方法；在其中添加一个100毫秒的线程，解决快速闪现的问题；用for循环，循环15次让其不断移动
+
+【TankGame03】
+	-->1.实现了我方子弹连续发射，最多发射4个，且都显示在面板上
+	-->在hero下建立一个Vector，将子弹装入其中。连带地，再 绘制 和 hitTank 方法中，都遍历其 绘制 或 判断。
+	-->2.发现只有最后一颗子弹才能击中敌人，这是你使用原来bullet变量的原因
+
+【TankGame04】
+	-->1.实现了敌人自动射击，每次只能发射一颗子弹。
+	-->2.两种实现方式：a.一种是根据敌人tank 是否存活 来决定下一个子弹 是否发射;b.一种是根据Enemy类下的Vector<Bullets>是否为空 来决定下一个子弹 是否发射
+	--》但是由于绘制是根据Vector<Bullets>绘制，故更推荐b方法
+	-->3.autoShot(),写在Enemy类的run()线程中
+
+【TankGame05】
+	-->1.实现了敌人子弹能够击中hero坦克
+	-->2.同理之前 hero的子弹 击中 enemy。由于我有hitTank(Bullet b, Tank t)，故 很方便
+	-->3. 由于我们不知道接下来那颗 子弹 将击中 hero，故 取得敌人所有的子弹,获取位置,都进行一遍hitTank方法判断
+
+【TankGame06】
+	-->1.实现tank与tank之间不要重叠！
+	--》时间吞噬机器，要把所有的分支情景都考虑到
+	-->思路：Tank类下的Vector<Tank>,每new一个tank对象，就存入到vector中，然后让其中一个依次与其他tank位置进行判断
+	-->注意otherTank != this //排除当前tank它自己
+
+	->2.解决了敌人tank 有时只会有 极个别才会发射子弹
+	->bullet的容器不要随意改成static
+
+【TankGame07】
+	-->1.记录我方击毁tank总数
+	-->Recoder类，a:该类记录我方击毁tank数；b:当游戏结束时,将数据写入到文件(IO),用于记录
+	->2.记录所有tank的当前位置
+	-->也需要用到Vector<Tank>
+
+【TankGame08】
+	-->1.通过IO流完成了简单的游戏存储
+	-->仅仅通关BufferedWriter和BufferedReader就可以完成。
+	-->利用Recoder编写静态方法，记录当前tank的X、Y以及Direct。存储在 src->图片素材->recorderFile.txt 下面
+	-->恢复时，利用Node中转类 对 X、Y、Direct 进行记录。在画板一开始时，就进行初始化。
+	-->2.增加场景选择，可以选择“开始新游戏”或“继续上局游戏”。
+	--》仍然存在一些数据不准确的bug
+
+
+/* * * */
+改进：
+1.Rectangle类？hitBox类比自己判断各自碰撞情况便利有效得多
