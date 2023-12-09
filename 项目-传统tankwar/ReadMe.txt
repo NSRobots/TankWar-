@@ -4,4 +4,4 @@
 打开方式：
 1.打开用idea运行"\TankGame07\HspTankGame.java"文件
 
-2.在"javaweb期末\项目3-传统tankwar\TankWar_2.0_NewPaj\out\production\TankWar_2.0_NewPaj\com\MyTankWar\TankGame07"下cmd进入命令窗口，java运行"HspTankGame.class"即可
+2.在"项目-传统tankwar\TankWar_2.0_NewPaj\out\production\TankWar_2.0_NewPaj\com\MyTankWar\TankGame07"下cmd进入命令窗口，java运行"HspTankGame.class"即可
